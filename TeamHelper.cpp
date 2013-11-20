@@ -37,20 +37,11 @@ std::vector<model::Trooper> TeamHelper::getTeammatesAround(const model::Trooper&
 	return closeTeammates;
 }
 
-#include <fstream>
 bool TeamHelper::isAround(const model::Trooper& self, const model::Trooper& other)
 {
-
-//	Logger::log() << "Self: " << self.getX() << self.getY();
-//	Logger::log() << "Other: " << other.getX() << other.getY();
-	/*
-	std::ofstream myfile;
-	myfile.open ("test123.txt", std::ios::out | std::ios::app);
-	myfile << "Writing this to a file.\n";*/
 	const int deltaX = std::abs(self.getX() - other.getX());
 	const int deltaY = std::abs(self.getY() - other.getY());
 
 	// diff on x and y is less then 2
-//	Logger::log() << "Result: " << ((deltaX <= 1) && (deltaY <= 1));
 	return (deltaX <= 1) && (deltaY <= 1);
 }
