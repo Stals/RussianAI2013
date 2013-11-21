@@ -6,15 +6,17 @@
 #include <iostream>
 
 #include "HealHelper.h"
+#include "Astar.h"
 
 
 using namespace model;
 using namespace std;
 
-Corner MyStrategy::currentTarget = TopRight;
+Corner MyStrategy::currentTarget = BottomLeft;
 
 MyStrategy::MyStrategy() { 
 	// TODO нужно в начале выбрать первую цель - чтобы идти не в противоположный
+
 }
 
 
@@ -129,46 +131,53 @@ bool MyStrategy::simpleMove(const Trooper& self, const World& world, const Game&
         vector<vector<CellType> > cells = world.getCells();             // Получаем карту препятствий на игровом поле
 
 		Point targetPoint = chooseTarget(self, world);
-		int targetX = targetPoint.x;
-		int targetY = targetPoint.y;
+		
+		// fill map
+		for(int y = 0; y < m; y++){
+			for(int x = 0; x < n; x++){
+				if(cells[x][y] == FREE){
+					map[x][y] = 0;
+				}else{
+					map[x][y] = 1;
+				}
+			}
+		}
+
+		// print
+		/*for(int y=0;y<m;y++)
+		{
+			for(int x=0;x<n;x++)
+				if(map[x][y]==0)
+					cout<<".";
+				else if(map[x][y]==1)
+					cout<<"O"; //obstacle
+				else if(map[x][y]==2)
+					cout<<"S"; //start
+				else if(map[x][y]==3)
+					cout<<"R"; //route
+				else if(map[x][y]==4)
+					cout<<"F"; //finish
+			cout<<endl;
+		}*/
 
 
-        int offsetX = self.getX() > targetX ? -1                        // Определяем смещение при движении по оси X
-            : self.getX() < targetX ? 1
-            : 0;
 
-        int offsetY = self.getY() > targetY ? -1                        // Определяем смещение при движении по оси Y
-            : self.getY() < targetY ? 1
-            : 0;
+		// find route
+		std::string route=pathFind(self.getX(), self.getY(), targetPoint.x, targetPoint.y);
 
-        bool canMoveX = offsetX != 0                                    // Определяем необходимость и возможность движения
-            && cells[self.getX() + offsetX][self.getY()] == FREE;       // по оси X
+		if(route.length()>0)
+    {       char c = route.at(0);
+            int j = atoi(&c); 
+            int x = self.getX() + dx[j];
+            int y = self.getY() + dy[j];
+			move.setAction(MOVE);
+			move.setX(x);                                 
+            move.setY(y);  
+			return true;
+		}	
 
-        bool canMoveY = offsetY != 0                                    // Определяем необходимость и возможность движения
-            && cells[self.getX()][self.getY() + offsetY] == FREE;       // по оси Y
-
-        if (canMoveX || canMoveY) {                                     // Если мы можем двигаться хотя бы в одном направлении
-            move.setAction(MOVE);                                       // Устанавливаем действие "перемещение"
-
-            if (canMoveX && canMoveY) {                                 // Если можем двигаться в двух направлениях
-                if (rand() % 2 == 0) {                                  // Выбираем направление случайно
-                    move.setX(self.getX() + offsetX);                   // Устанавливаем смещение по горизонтали
-                    move.setY(self.getY());                             // Оставляем текущую координату Y
-                } else {
-                    move.setX(self.getX());                             // Оставляем текущую координату X
-                    move.setY(self.getY() + offsetY);                   // Устанавливаем смещение по вертикали
-                }
-            } else if (canMoveX) {                                      // Если можем двигаться только по горизонтали
-                move.setX(self.getX() + offsetX);                       // Устанавливаем смещение по горизонтали
-                move.setY(self.getY());                                 // Оставляем текущую координату Y
-            } else {                                                    // Остался только один вариант: движение по вертикали
-                move.setX(self.getX());                                 // Оставляем текущую координату X
-                move.setY(self.getY() + offsetY);                       // Устанавливаем смещение по вертикали
-            }
-
-            return true;                                                     // Завершаем ход
-        }
     }
+    
 	return false;
 }
 
