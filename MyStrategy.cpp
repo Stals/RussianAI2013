@@ -40,7 +40,10 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 	if(HealHelper::useHeal(turnData, OTHERS)) return;
 
-	if(ShootHelper::shoot(turnData)) return;
+	if(ShootHelper::shoot(turnData)) {
+		//TODO use ration
+		return;
+	}
 
 	if(HealHelper::useHeal(turnData, SELF)) return;
 	// TODO - check for bonuses

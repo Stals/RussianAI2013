@@ -3,6 +3,41 @@
 
 bool ShootHelper::shoot(TurnData& turnData)
 {
+
+	if (!(turnData.self.getActionPoints() >= turnData.self.getShootCost())) return false;
+	std::vector<Trooper> troopers = turnData.world.getTroopers(); 
+
+
+	// 1) ѕровер€ем может кого-то успеем убить
+	for (size_t i = 0; i < troopers.size(); ++i) {
+        Trooper trooper = troopers.at(i);
+		if(!trooper.isTeammate() && isVisible(turnData.world, turnData.self, trooper)){
+			
+			// сколько раз сможет выстрелить
+			const int possibleShots = turnData.self.getActionPoints() / turnData.self.getShootCost();
+			const int possibleDMG = possibleShots * turnData.self.getDamage();
+
+			if(possibleDMG >= trooper.getHitpoints()){
+			    turnData.move.setAction(SHOOT);                       
+                turnData.move.setX(trooper.getX());                       
+                turnData.move.setY(trooper.getY()); 
+			}
+			
+		}
+	}
+
+
+
+	// 2) ѕровер€ем можем ли стрел€ть в медика
+
+	// 3) —трел€ем в цель с наименьшим здоровьем
+
+
+
+
+
+
+
 		if (turnData.self.getActionPoints() >= turnData.self.getShootCost()) {                 // ≈сли достаточно очков действи€
         std::vector<Trooper> troopers = turnData.world.getTroopers();                 // ѕолучаем список всех видимых бойцов на поле бо€
 
