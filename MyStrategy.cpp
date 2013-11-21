@@ -34,7 +34,6 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 	// TODO use сухпаек
 	if(useGrenade(turnData)) return;
 
-	//if(useMedkit(turnData)) return;
 
 	if(HealHelper::useMedkit(turnData, OTHERS)) return;
 	if(HealHelper::useMedkit(turnData, SELF)) return;
@@ -79,26 +78,6 @@ bool MyStrategy::useGrenade(const TurnData& turnData)
 	return false;
 }
 
-bool MyStrategy::useMedkit(const TurnData& turnData){
-	//TODO 1) medkit other - else try self
-
-	if(turnData.self.isHoldingMedikit()){
-		// if can use
-		if (turnData.self.getActionPoints() >= turnData.game.getMedikitUseCost()) {   
-			// if need to use
-			const int missingHP = (turnData.self.getMaximalHitpoints() - turnData.self.getHitpoints());
-			if( missingHP >= turnData.game.getMedikitHealSelfBonusHitpoints()){
-				
-				turnData.move.setAction(USE_MEDIKIT); 
-				turnData.move.setX(turnData.self.getX());
-				turnData.move.setY(turnData.self.getY());
-
-				return true;   
-			}
-		}
-	}
-	return false;
-}
 
 bool MyStrategy::simpleShoot(const Trooper& self, const World& world, const Game& game, Move& move){
 	 if (self.getActionPoints() >= self.getShootCost()) {                 // Если достаточно очков действия

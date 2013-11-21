@@ -22,7 +22,6 @@ public:
 
 
 	bool useGrenade(const TurnData& turnData);
-	bool useMedkit(const TurnData& turnData);
 	bool simpleShoot(const model::Trooper& self, const model::World& world, const model::Game& game, model::Move& move);\
 
 	bool simpleMove(const model::Trooper& self, const model::World& world, const model::Game& game, model::Move& move);
