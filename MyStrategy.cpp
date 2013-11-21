@@ -6,17 +6,17 @@
 #include <iostream>
 
 #include "HealHelper.h"
+#include "ShootHealper.h"
 #include "Astar.h"
 
 
 using namespace model;
 using namespace std;
 
-Corner MyStrategy::currentTarget = BottomLeft;
+Corner MyStrategy::currentTarget = TopRight;
 
 MyStrategy::MyStrategy() { 
 	// TODO нужно в начале выбрать первую цель - чтобы идти не в противоположный
-
 }
 
 
@@ -40,8 +40,7 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 	if(HealHelper::useHeal(turnData, OTHERS)) return;
 
-
-	if(simpleShoot(self, world, game, move)) return;
+	if(ShootHelper::shoot(turnData)) return;
 
 	if(HealHelper::useHeal(turnData, SELF)) return;
 	// TODO - check for bonuses
@@ -78,29 +77,6 @@ bool MyStrategy::useGrenade(const TurnData& turnData)
 	return false;
 }
 
-
-bool MyStrategy::simpleShoot(const Trooper& self, const World& world, const Game& game, Move& move){
-	 if (self.getActionPoints() >= self.getShootCost()) {                 // Если достаточно очков действия
-        vector<Trooper> troopers = world.getTroopers();                 // Получаем список всех видимых бойцов на поле боя
-
-        for (size_t i = 0; i < troopers.size(); ++i) {                  // Перебираем всех видимых бойцов
-            Trooper trooper = troopers.at(i);
-
-            bool canShoot = world.isVisible(self.getShootingRange(),    // Проверяем, что цель не скрыта от бойца
-                self.getX(), self.getY(), self.getStance(),             // каким-либо препятствием, а также находится
-                trooper.getX(), trooper.getY(), trooper.getStance());   // в пределах его дальности стрельбы
-
-            if (canShoot && !trooper.isTeammate()) {                    // Если можем стрелять и это не союзник
-                move.setAction(SHOOT);                                  // Устанавливаем действие "выстрел"
-                move.setX(trooper.getX());                              // Устанавливаем координаты цели X...
-                move.setY(trooper.getY());                              // ...и Y
-                return true;                                            // Завершаем ход
-            }
-        }
-    }
-	 return false;
-
-}
 
 
 bool MyStrategy::simpleMove(const Trooper& self, const World& world, const Game& game, Move& move){
