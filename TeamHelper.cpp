@@ -43,5 +43,6 @@ bool TeamHelper::isAround(const model::Trooper& self, const model::Trooper& othe
 	const int deltaY = std::abs(self.getY() - other.getY());
 
 	// diff on x and y is less then 2
-	return (deltaX <= 1) && (deltaY <= 1);
+	// ((deltaX - deltaY) != 0) - check not diagonal
+	return ((deltaX - deltaY) != 0) && (deltaX <= 1) && (deltaY <= 1);
 }
