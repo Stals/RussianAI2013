@@ -6,8 +6,7 @@ bool ShootHelper::shoot(TurnData& turnData)
 
 	if (!(turnData.self.getActionPoints() >= turnData.self.getShootCost())) return false;
 	std::vector<Trooper> troopers = turnData.world.getTroopers(); 
-
-
+	
 	// 1) Проверяем может кого-то успеем убить
 	for (size_t i = 0; i < troopers.size(); ++i) {
         Trooper trooper = troopers.at(i);
@@ -21,42 +20,48 @@ bool ShootHelper::shoot(TurnData& turnData)
 			    turnData.move.setAction(SHOOT);                       
                 turnData.move.setX(trooper.getX());                       
                 turnData.move.setY(trooper.getY()); 
-			}
-			
+				return true;
+			}			
 		}
+	}	
+	
+	// 2) Проверяем можем ли стрелять в медика
+	// TODO в медика с меньшим хп
+	for (size_t i = 0; i < troopers.size(); ++i) {
+		Trooper trooper = troopers.at(i);
+		if(!trooper.isTeammate() && isVisible(turnData.world, turnData.self, trooper)){
+			if(trooper.getType() == FIELD_MEDIC){
+				turnData.move.setAction(SHOOT);                       
+				turnData.move.setX(trooper.getX());                       
+				turnData.move.setY(trooper.getY()); 
+				return true;
+			}
+		}
+	}	
+	
+	// 3) Стреляем в цель с наименьшим здоровьем
+	int lowestHP = 999;
+	int lowestHP_id = -1;
+	for (size_t i = 0; i < troopers.size(); ++i) {
+		Trooper trooper = troopers.at(i);
+		if(!trooper.isTeammate() && isVisible(turnData.world, turnData.self, trooper)){
+			if(trooper.getHitpoints() < lowestHP){
+				lowestHP = trooper.getHitpoints();
+				lowestHP_id = i;
+			}
+		}
+	}
+	// если  не остался -1 то стреляем
+	if(lowestHP_id != -1){
+		Trooper trooper = troopers.at(lowestHP_id);
+		turnData.move.setAction(SHOOT);                       
+		turnData.move.setX(trooper.getX());                       
+		turnData.move.setY(trooper.getY()); 
+		return true;
 	}
 
 
-
-	// 2) Проверяем можем ли стрелять в медика
-
-	// 3) Стреляем в цель с наименьшим здоровьем
-
-
-
-
-
-
-
-		if (turnData.self.getActionPoints() >= turnData.self.getShootCost()) {                 // Если достаточно очков действия
-        std::vector<Trooper> troopers = turnData.world.getTroopers();                 // Получаем список всех видимых бойцов на поле боя
-
-        for (size_t i = 0; i < troopers.size(); ++i) {                  // Перебираем всех видимых бойцов
-            Trooper trooper = troopers.at(i);
-
-			const bool canShoot = isVisible(turnData.world, turnData.self, trooper);
-
-            if (canShoot && !trooper.isTeammate()) {                   
-                turnData.move.setAction(SHOOT);                       
-                turnData.move.setX(trooper.getX());                       
-                turnData.move.setY(trooper.getY());                      
-                return true;                                           
-            }
-        }
-    }
-	 return false;
-
-
+	return false;
 }
 
 
