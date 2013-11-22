@@ -20,7 +20,7 @@ public:
     MyStrategy();
     void move(const model::Trooper& self, const model::World& world, const model::Game& game, model::Move& move);
 
-
+	bool useRation(const TurnData& turnData);
 	bool useGrenade(const TurnData& turnData);
 	
 	bool simpleMove(const model::Trooper& self, const model::World& world, const model::Game& game, model::Move& move);

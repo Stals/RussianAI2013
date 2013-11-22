@@ -31,9 +31,7 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 	//!!!!!// TODO разнести heal others и heal self так чтобы их очередность можно было выбирать 
 	
-	// TODO use сухпаек
 	if(useGrenade(turnData)) return;
-
 
 	if(HealHelper::useMedkit(turnData, OTHERS)) return;
 	if(HealHelper::useMedkit(turnData, SELF)) return;
@@ -41,13 +39,34 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 	if(HealHelper::useHeal(turnData, OTHERS)) return;
 
 	if(ShootHelper::shoot(turnData)) {
-		//TODO use ration
+		// Если не получилось съесть он всеравно выстрелит
+		// TODO есть только если больше 1 противника, либо за 1 раз не убиваю полностью того кто есть
+		useRation(turnData);
 		return;
 	}
 
 	if(HealHelper::useHeal(turnData, SELF)) return;
 	// TODO - check for bonuses
 	if(simpleMove(self, world, game, move)) return;
+}
+
+
+bool MyStrategy::useRation(const TurnData& turnData)
+{
+	if(!turnData.self.isHoldingFieldRation()) return false;
+	if(!(turnData.self.getActionPoints() >= turnData.game.getFieldRationEatCost())) return false;
+
+	const int additionalPoints = turnData.game.getFieldRationBonusActionPoints() - turnData.game.getFieldRationEatCost();
+
+	// только если ничгео не будет wasted
+	if((turnData.self.getActionPoints() + additionalPoints) <= turnData.self.getInitialActionPoints()){
+		turnData.move.setAction(EAT_FIELD_RATION);
+		turnData.move.setX(turnData.self.getX());
+		turnData.move.setY(turnData.self.getY());
+		return true;
+	}
+
+	return false;
 }
 
 bool MyStrategy::useGrenade(const TurnData& turnData)
