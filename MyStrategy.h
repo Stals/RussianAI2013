@@ -7,11 +7,12 @@
 #include "TurnData.h"
 #include "Point.h"
 
+// -2/2 нужны для определения противоположных углов
 enum Corner{
-	TopLeft,
-	TopRight,
-	BottomLeft,
-	BottomRight
+	TopLeft = -2,
+	BottomRight = 2,
+	TopRight = -1,
+	BottomLeft = 1
 };
 
 
@@ -30,6 +31,8 @@ public:
 
 private:
 	static Corner currentTarget;
+
+	Corner getRandomCorner();
 };
 
 #endif

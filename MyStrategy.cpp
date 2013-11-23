@@ -169,9 +169,9 @@ Point MyStrategy::chooseTarget(const Trooper& self, const model::World& world){
 	if(selfPoint.inRadius(targetPoint, closeEnough)){
 		// choose new target
 		Corner newTarget;
-		//do{
-			newTarget = static_cast<Corner>(rand() % 4);
-		//}while(newTarget != currentTarget);
+		do{
+			newTarget = getRandomCorner();
+		}while((newTarget == currentTarget) || ((abs(newTarget) == abs(currentTarget))));
 		// TODO и не противоположный угол, потому что через центр не айс
 
 		currentTarget = newTarget;
@@ -188,12 +188,29 @@ Point MyStrategy::targetToPoint(const model::World& world, Corner target)
 	const static Point BottomRight(world.getWidth() - offset, world.getHeight() - offset);*/
 	
 	const int offset = 1;
-	static const Point corners[] = {
+	/*static const Point corners[] = {
 		Point(offset, offset),										// TopLeft
 		Point(world.getWidth() - offset, offset),					// TopRight
 		Point(offset, world.getHeight() - offset),					// BottomLeft
 		Point(world.getWidth() - offset, world.getHeight() - offset)// BottomRight
 	};
+	return corners[target];*/
 
-	return corners[target];
+	switch(target){
+	case TopLeft: return Point(offset, offset);
+	case TopRight: return Point(world.getWidth() - offset, offset);
+	case BottomLeft: return Point(offset, world.getHeight() - offset);
+	case BottomRight: return Point(world.getWidth() - offset, world.getHeight() - offset);
+	}
+	return Point(0,0);
+}
+
+Corner MyStrategy::getRandomCorner()
+{
+	// выбирам 1 или 2
+	int rnd = ((rand() % 2) + 1);
+	bool isMinus = rand() % 2;
+	if(isMinus) rnd *= -1;
+
+	return static_cast<Corner>(rnd);
 }
