@@ -7,13 +7,6 @@
 #include "TurnData.h"
 #include "Point.h"
 
-// -2/2 нужны для определения противоположных углов
-enum Corner{
-	TopLeft = -2,
-	BottomRight = 2,
-	TopRight = -1,
-	BottomLeft = 1
-};
 
 
 class MyStrategy : public Strategy {
@@ -24,19 +17,14 @@ public:
 	bool useRation(const TurnData& turnData);
 	bool useGrenade(const TurnData& turnData);
 	
-	bool simpleMove(const model::Trooper& self, const model::World& world, const model::Game& game, model::Move& move);
-	Point chooseTarget(const model::Trooper& self, const model::World& world);
 
-	Point targetToPoint(const model::World& world, Corner target);
 
 private:
-	static Corner currentTarget;
+
 	static bool firstMove;
 
 	void doFirstMoveStuff(const TurnData& turnData);
 
-	Corner getRandomCorner();
-	Corner getCurrentCorner(const model::World& world, const model::Trooper& self);
 };
 
 #endif
