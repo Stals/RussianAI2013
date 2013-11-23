@@ -24,6 +24,8 @@ private:
 
 	void doFirstMoveStuff(const TurnData& turnData);
 
+	bool isSeparatedMap(const TurnData& turnData);
+
 };
 
 #endif

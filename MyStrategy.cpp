@@ -29,7 +29,22 @@ MyStrategy::MyStrategy() {
 void MyStrategy::doFirstMoveStuff(const TurnData& turnData)
 {
 	MovementHelper::chooseFirstTarget(turnData);
+	separatedMap = isSeparatedMap(turnData);
 }
+
+bool MyStrategy::isSeparatedMap(const TurnData& turnData)
+{
+	Trooper healer;
+	TurnData healerTurnData(healer, turnData.world, turnData.game, turnData.move);
+
+	if(TeamHelper::getTeammateWithType(FIELD_MEDIC, healer, turnData.world)){
+		return TeamHelper::getTeammatesInRadius(1.5, healerTurnData).empty();
+	}
+
+	// TODO хотябы 1 мне нужно проверить!!
+	return false;
+}
+
 /*
 	TODO за движение должен отвечать прям отдельный класс который движется
 	Потому что это большой кусок мне кажется

@@ -38,6 +38,23 @@ std::vector<model::Trooper> TeamHelper::getTeammatesAround(const model::Trooper&
 	return closeTeammates;
 }
 
+ std::vector<model::Trooper> TeamHelper::getTeammatesInRadius(double radius, const TurnData& turnData)
+ {
+	std::vector<model::Trooper> inRadius;
+	std::vector<model::Trooper> teammates = getTeammates(turnData.world);
+	for(size_t i = 0; i < teammates.size(); ++i){
+		Trooper trooper = teammates[i];
+
+		if(turnData.self.getTeammateIndex() != trooper.getTeammateIndex()){
+			
+			if(Point(turnData.self).inRadius(trooper, radius)){
+				inRadius.push_back(trooper);
+			}
+		}
+	}
+	return inRadius;
+ }
+
 bool TeamHelper::isAround(const model::Trooper& self, const model::Trooper& other)
 {
 	const int deltaX = std::abs(self.getX() - other.getX());
@@ -84,6 +101,22 @@ bool TeamHelper::getTeammateToHeal(const TurnData& turnData, model::Trooper& tea
 	if(teammateID != -1){
 		teammateToHeal = teammates[teammateID];
 		return true;
+	}
+
+	return false;
+}
+
+bool TeamHelper::getTeammateWithType(TrooperType type, model::Trooper& teammate, const model::World& world)
+{
+	std::vector<model::Trooper> teammates = TeamHelper::getTeammates(world);
+
+	for(size_t i = 0; i < teammates.size(); ++i){
+		Trooper trooper = teammates[i];
+
+		if(trooper.getType() == type){
+			teammate = trooper;
+			return true;
+		}
 	}
 
 	return false;

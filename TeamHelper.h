@@ -33,6 +33,7 @@ class TeamHelper{
 public:
 	static std::vector<model::Trooper> getTeammates(const model::World& world);
 	static std::vector<model::Trooper> getTeammatesAround(const model::Trooper& self,  const model::World& world);
+	static std::vector<model::Trooper> getTeammatesInRadius(double radius, const TurnData& turnData);
 
 	static bool isAround(const model::Trooper& self, const model::Trooper& other); 
 
@@ -41,6 +42,8 @@ public:
 
 	// return true if found someone
 	static bool getTeammateToHeal(const TurnData& turnData, model::Trooper& teammate);
+	 
+	static bool getTeammateWithType(TrooperType type, model::Trooper& teammate, const model::World& world);
 
 	// методы общие и для других типочков, возврващает в trooper
 	// returns true если получилось найти
