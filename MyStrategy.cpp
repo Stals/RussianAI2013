@@ -40,6 +40,7 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 		firstMove = false;
 		doFirstMoveStuff(turnData);
 	}
+
 	
 	if(useGrenade(turnData)) return;
 
@@ -57,7 +58,15 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 	if(HealHelper::useHeal(turnData, SELF)) return;
 	// TODO - check for bonuses
-	if(MovementHelper::simpleMove(turnData)) return;
+
+	if(self.getType() == FIELD_MEDIC){
+		if(MovementHelper::follow(SOLDIER, turnData)) return;
+		else if(MovementHelper::follow(COMMANDER, turnData)) return;
+	}else if(self.getType() == COMMANDER){
+		if(MovementHelper::follow(SOLDIER, turnData)) return;
+	}
+
+	if(MovementHelper::simpleMove(turnData)) return;	
 }
 
 

@@ -19,7 +19,7 @@ public:
 	static bool simpleMove(const TurnData& turnData);
 
 	// пробует следовать за союзником этого типа / если такого нет или не получается возвращает false
-	static bool follow(TrooperType type);
+	static bool follow(TrooperType type, const TurnData& turnData);
 
 	static bool moveTo(const Point& target, const TurnData& turnData);
 

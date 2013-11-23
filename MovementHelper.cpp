@@ -1,5 +1,9 @@
 #include "MovementHelper.h"
 #include "Astar.h"
+#include "TeamHelper.h"
+#include <cmath>
+#include <cstdlib>
+
 Corner MovementHelper::currentTarget = TopLeft;
 
 void MovementHelper::chooseFirstTarget(const TurnData& turnData)
@@ -29,19 +33,12 @@ Corner MovementHelper::getCurrentCorner(const model::World& world, const model::
 }
 
 bool MovementHelper::simpleMove(const TurnData& turnData){
-	// TODO поочередно идем по всем углам, как только доходим достаточно близко идем в след угол
-
-	if (turnData.self.getActionPoints() >= turnData.game.getStandingMoveCost()) {         // Если достаточно очков действия
-		Point targetPoint = chooseTarget(turnData.self, turnData.world);		
-		return MovementHelper::moveTo(targetPoint, turnData);
-    }
-    
-	return false;
+	Point targetPoint = chooseTarget(turnData.self, turnData.world);		
+	return MovementHelper::moveTo(targetPoint, turnData);
 }
 
 Point MovementHelper::chooseTarget(const Trooper& self, const model::World& world){
 	// TODO нужно в начале выбрать первую цель - чтобы идти не в противоположный
-	
 	const int closeEnough = 3;
 
 	Point selfPoint(self.getX(), self.getY());
@@ -76,6 +73,9 @@ Point MovementHelper::targetToPoint(const model::World& world, Corner target)
 
 bool MovementHelper::moveTo(const Point& targetPoint, const TurnData& turnData)
 {
+	if (!(turnData.self.getActionPoints() >= turnData.game.getStandingMoveCost())) return false;
+	 // Если достаточно очков действия
+
 	vector<vector<CellType> > cells = turnData.world.getCells();             // Получаем карту препятствий на игровом поле
 		// fill map
 		for(int y = 0; y < m; y++){
@@ -124,10 +124,22 @@ bool MovementHelper::moveTo(const Point& targetPoint, const TurnData& turnData)
 
 }
 
-bool MovementHelper::follow(TrooperType type)
+bool MovementHelper::follow(TrooperType type, const TurnData& turnData)
 {
 	// get teammates
 	// get teammate with this type
 	// go to this point as target
+
+	std::vector<model::Trooper> teammates = TeamHelper::getTeammates(turnData.world);
+
+	for(size_t i = 0; i < teammates.size(); ++i){
+		Trooper trooper = teammates[i];
+
+		if(trooper.getType() == type){
+			return moveTo(Point(trooper), turnData);
+		}
+	}
+
+
 	return false;
 }
