@@ -31,8 +31,12 @@ public:
 
 private:
 	static Corner currentTarget;
+	static bool firstMove;
+
+	void doFirstMoveStuff(const TurnData& turnData);
 
 	Corner getRandomCorner();
+	Corner getCurrentCorner(const model::World& world, const model::Trooper& self);
 };
 
 #endif

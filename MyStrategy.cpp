@@ -13,13 +13,20 @@
 using namespace model;
 using namespace std;
 
-Corner MyStrategy::currentTarget = TopRight;
+Corner MyStrategy::currentTarget = TopLeft;
+bool MyStrategy::firstMove = true;
 
 MyStrategy::MyStrategy() { 
 	// TODO нужно в начале выбрать первую цель - чтобы идти не в противоположный
+
 }
 
-
+void MyStrategy::doFirstMoveStuff(const TurnData& turnData)
+{
+	// определим первую цель
+	currentTarget = getCurrentCorner(turnData.world, turnData.self);
+	chooseTarget(turnData.self, turnData.world);
+}
 /*
 	TODO за движение должен отвечать прям отдельный класс который движется
 	Потому что это большой кусок мне кажется
@@ -29,7 +36,11 @@ MyStrategy::MyStrategy() {
 void MyStrategy::move(const Trooper& self, const World& world, const Game& game, Move& move) {
 	TurnData turnData(self, world, game, move);
 
-	//!!!!!// TODO разнести heal others и heal self так чтобы их очередность можно было выбирать 
+	// if first turn
+	if(firstMove){
+		firstMove = false;
+		doFirstMoveStuff(turnData);
+	}
 	
 	if(useGrenade(turnData)) return;
 
@@ -214,3 +225,13 @@ Corner MyStrategy::getRandomCorner()
 
 	return static_cast<Corner>(rnd);
 }
+
+Corner MyStrategy::getCurrentCorner(const model::World& world, const model::Trooper& self)
+{
+	if( Point(self).inRadius( targetToPoint(world, TopLeft), 5)) return TopLeft;
+	if( Point(self).inRadius( targetToPoint(world, TopRight), 5)) return TopRight;
+	if( Point(self).inRadius( targetToPoint(world, BottomLeft), 5)) return BottomLeft;
+	if( Point(self).inRadius( targetToPoint(world, BottomRight), 5)) return BottomRight;
+	return TopLeft;
+}
+
