@@ -34,7 +34,7 @@ Corner MovementHelper::getCurrentCorner(const model::World& world, const model::
 
 bool MovementHelper::simpleMove(const TurnData& turnData){
 	Point targetPoint = chooseTarget(turnData.self, turnData.world);		
-	return MovementHelper::moveTo(targetPoint, turnData);
+	return MovementHelper::moveTo(targetPoint, turnData, true);
 }
 
 Point MovementHelper::chooseTarget(const Trooper& self, const model::World& world){
@@ -71,7 +71,7 @@ Point MovementHelper::targetToPoint(const model::World& world, Corner target)
 }
 
 
-bool MovementHelper::moveTo(const Point& targetPoint, const TurnData& turnData)
+bool MovementHelper::moveTo(const Point& targetPoint, const TurnData& turnData, bool considerTeammates)
 {
 	if (!(turnData.self.getActionPoints() >= turnData.game.getStandingMoveCost())) return false;
 	 // Если достаточно очков действия
@@ -85,6 +85,14 @@ bool MovementHelper::moveTo(const Point& targetPoint, const TurnData& turnData)
 				}else{
 					map[x][y] = 1;
 				}
+			}
+		}
+
+		if(considerTeammates){
+			std::vector<model::Trooper> teammates = TeamHelper::getTeammates(turnData.world);
+			for(size_t i = 0; i < teammates.size(); ++i){
+				Trooper trooper = teammates[i];
+				map[trooper.getX()][trooper.getY()] = 1;
 			}
 		}
 
@@ -136,7 +144,7 @@ bool MovementHelper::follow(TrooperType type, const TurnData& turnData)
 		Trooper trooper = teammates[i];
 
 		if(trooper.getType() == type){
-			return moveTo(Point(trooper), turnData);
+			return moveTo(Point(trooper), turnData, false);
 		}
 	}
 

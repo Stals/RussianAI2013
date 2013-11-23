@@ -21,7 +21,8 @@ public:
 	// пробует следовать за союзником этого типа / если такого нет или не получается возвращает false
 	static bool follow(TrooperType type, const TurnData& turnData);
 
-	static bool moveTo(const Point& target, const TurnData& turnData);
+	// considerTeammates - если true то будет строить маршрут вокруг них
+	static bool moveTo(const Point& target, const TurnData& turnData, bool considerTeammates);
 
 private:
 	MovementHelper();
