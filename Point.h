@@ -16,4 +16,8 @@ struct Point{
 		}
 		return false;
 	}
+
+	double getDistanceTo(const Point& other){
+		return std::fabs(sqrt((double)((other.x - x)*(other.x - x) + (other.y - y)*(other.y - y))));
+	}
 };

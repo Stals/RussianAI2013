@@ -53,12 +53,40 @@ bool TeamHelper::teammatesInRadius(double radius, const TurnData& turnData)
 	bool allInRange = true;
 	// Note: пробегаем и по себе потому что лень
 	std::vector<model::Trooper> teammates = getTeammates(turnData.world);
-		for(size_t i = 0; i < teammates.size(); ++i){
+	for(size_t i = 0; i < teammates.size(); ++i){
 		Trooper trooper = teammates[i];
 		allInRange &= Point(turnData.self).inRadius(trooper, radius);
 	}
 
 	return allInRange;
+}
+
+bool TeamHelper::getTeammateToHeal(const TurnData& turnData, model::Trooper& teammateToHeal)
+{
+	double minDistance = 9999;
+	int teammateID = -1;
+
+	// нужно кто ближе наверное
+	std::vector<model::Trooper> teammates = getTeammates(turnData.world);
+	for(size_t i = 0; i < teammates.size(); ++i){
+		Trooper trooper = teammates[i];
+		// if not self
+		if(turnData.self.getTeammateIndex() != trooper.getTeammateIndex()){
+			const double distance = Point(turnData.self).getDistanceTo(trooper);
+			const bool notFullHP = trooper.getHitpoints() < trooper.getMaximalHitpoints();
+			if( notFullHP && (distance < minDistance)){
+				minDistance = distance;
+				teammateID = i;
+			}
+		}
+	}
+
+	if(teammateID != -1){
+		teammateToHeal = teammates[teammateID];
+		return true;
+	}
+
+	return false;
 }
 
 

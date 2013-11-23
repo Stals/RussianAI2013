@@ -87,7 +87,17 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 	
 		}
 
+	}else{
+		if(self.getHitpoints() > 50){ // тк как иначе пусть себя хилит
+			Trooper teammateToHeal;
+			if(TeamHelper::getTeammateToHeal(turnData, teammateToHeal)){
+				if(MovementHelper::moveTo(Point(teammateToHeal), turnData, false))
+					return;
+			}
+		}
 	}
+
+
 	// TODO не забывать есть рацион
 	// если несколько противников - он цель должен выбирать как shoot
 	// - тоесть shoot ее должен вернуть чтобы я id сохранил!!

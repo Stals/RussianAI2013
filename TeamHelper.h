@@ -39,8 +39,12 @@ public:
 	// Возвращает true если все живые находятся в радиусе radius
 	static bool teammatesInRadius(double radius, const TurnData& turnData);
 
+	// return true if found someone
+	static bool getTeammateToHeal(const TurnData& turnData, model::Trooper& teammate);
+
 	// методы общие и для других типочков, возврващает в trooper
 	// returns true если получилось найти
 	static bool getTrooperByUniqueIndex(TrooperIndex index, model::Trooper& trooper, const model::World& world);
+
 
 };
