@@ -1,10 +1,11 @@
 #pragma once
 #include <complex>
 #include <cmath>
+#include "model/Unit.h"
 
 struct Point{
 	Point(int x, int y):x(x), y(y){}
-	Point(const model::Trooper& self):x(self.getX()), y(self.getY()){}
+	Point(const model::Unit& self):x(self.getX()), y(self.getY()){}
 
 	int x;
 	int y;
