@@ -17,8 +17,9 @@ using namespace model;
 using namespace std;
 
 
-bool MyStrategy::firstMove = true;
 TrooperIndex MyStrategy::currentEnemyID = TrooperIndex::noIndex();
+bool MyStrategy::firstMove = true;
+bool MyStrategy::separatedMap = true;
 
 MyStrategy::MyStrategy() { 
 	// TODO нужно в начале выбрать первую цель - чтобы идти не в противоположный
@@ -133,7 +134,7 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 
 	// TODO только если остальные типочки вокруг тебя
-	if(TeamHelper::teammatesInRadius(5, turnData)){
+	if(separatedMap || TeamHelper::teammatesInRadius(5, turnData)){
 		if(MovementHelper::simpleMove(turnData)) return;
 	}
 }

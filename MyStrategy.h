@@ -20,6 +20,7 @@ public:
 private:
 	static TrooperIndex currentEnemyID;
 	static bool firstMove;
+	static bool separatedMap;
 
 	void doFirstMoveStuff(const TurnData& turnData);
 
