@@ -69,7 +69,7 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 
 	// TODO только если остальные типочки вокруг тебя
-	if(TeamHelper::teammatesInRadius(4, turnData)){
+	if(TeamHelper::teammatesInRadius(5, turnData)){
 		if(MovementHelper::simpleMove(turnData)) return;
 	}
 }
