@@ -8,6 +8,7 @@
 #include "HealHelper.h"
 #include "ShootHealper.h"
 #include "MovementHelper.h"
+#include "TeamHelper.h"
 
 
 
@@ -66,7 +67,11 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 		if(MovementHelper::follow(SOLDIER, turnData)) return;
 	}
 
-	if(MovementHelper::simpleMove(turnData)) return;	
+
+	// TODO только если остальные типочки вокруг тебя
+	if(TeamHelper::teammatesInRadius(4, turnData)){
+		if(MovementHelper::simpleMove(turnData)) return;
+	}
 }
 
 

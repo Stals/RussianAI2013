@@ -2,6 +2,7 @@
 #include "Logger.h"
 
 #include <complex>
+#include "Point.h"
 
 std::vector<model::Trooper> TeamHelper::getTeammates(const model::World& world){
 	std::vector<Trooper> troopers = world.getTroopers();
@@ -45,4 +46,17 @@ bool TeamHelper::isAround(const model::Trooper& self, const model::Trooper& othe
 	// diff on x and y is less then 2
 	// ((deltaX - deltaY) != 0) - check not diagonal
 	return ((deltaX - deltaY) != 0) && (deltaX <= 1) && (deltaY <= 1);
+}
+
+bool TeamHelper::teammatesInRadius(double radius, const TurnData& turnData)
+{
+	bool allInRange = true;
+	// Note: пробегаем и по себе потому что лень
+	std::vector<model::Trooper> teammates = getTeammates(turnData.world);
+		for(size_t i = 0; i < teammates.size(); ++i){
+		Trooper trooper = teammates[i];
+		allInRange &= Point(turnData.self).inRadius(trooper, radius);
+	}
+
+	return allInRange;
 }
