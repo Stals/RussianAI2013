@@ -6,7 +6,7 @@
 #include "Strategy.h"
 #include "TurnData.h"
 #include "Point.h"
-
+#include "TeamHelper.h"
 
 
 class MyStrategy : public Strategy {
@@ -16,11 +16,9 @@ public:
 
 	bool useRation(const TurnData& turnData);
 	bool useGrenade(const TurnData& turnData);
-	
-
 
 private:
-
+	static TrooperIndex currentEnemyID;
 	static bool firstMove;
 
 	void doFirstMoveStuff(const TurnData& turnData);

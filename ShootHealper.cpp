@@ -3,6 +3,15 @@
 
 bool ShootHelper::shoot(TurnData& turnData)
 {
+	Trooper target;
+	if(getTarget(turnData, target)){
+		return shoot(turnData, target);
+	}
+	return false;	
+}
+
+bool ShootHelper::getTarget(const TurnData& turnData, model::Trooper& target)
+{
 
 	if (!(turnData.self.getActionPoints() >= turnData.self.getShootCost())) return false;
 	std::vector<Trooper> troopers = turnData.world.getTroopers(); 
@@ -17,9 +26,7 @@ bool ShootHelper::shoot(TurnData& turnData)
 			const int possibleDMG = possibleShots * turnData.self.getDamage();
 
 			if(possibleDMG >= trooper.getHitpoints()){
-			    turnData.move.setAction(SHOOT);                       
-                turnData.move.setX(trooper.getX());                       
-                turnData.move.setY(trooper.getY()); 
+				target = trooper;
 				return true;
 			}			
 		}
@@ -31,9 +38,7 @@ bool ShootHelper::shoot(TurnData& turnData)
 		Trooper trooper = troopers.at(i);
 		if(!trooper.isTeammate() && isVisible(turnData.world, turnData.self, trooper)){
 			if(trooper.getType() == FIELD_MEDIC){
-				turnData.move.setAction(SHOOT);                       
-				turnData.move.setX(trooper.getX());                       
-				turnData.move.setY(trooper.getY()); 
+				target = trooper;
 				return true;
 			}
 		}
@@ -53,16 +58,26 @@ bool ShootHelper::shoot(TurnData& turnData)
 	}
 	// если  не остался -1 то стреляем
 	if(lowestHP_id != -1){
-		Trooper trooper = troopers.at(lowestHP_id);
-		turnData.move.setAction(SHOOT);                       
-		turnData.move.setX(trooper.getX());                       
-		turnData.move.setY(trooper.getY()); 
+		target = troopers.at(lowestHP_id);;
 		return true;
 	}
 
-
 	return false;
 }
+
+
+bool ShootHelper::shoot(TurnData& turnData, const model::Trooper& target)
+{
+	if(canShoot(turnData, target)){
+
+		turnData.move.setAction(SHOOT);                       
+		turnData.move.setX(target.getX());                       
+		turnData.move.setY(target.getY()); 
+		return true;
+	}
+	return false;
+}
+
 
 
 bool ShootHelper::isVisible(const model::World& world, const model::Trooper& self, const model::Trooper& target)
@@ -70,4 +85,11 @@ bool ShootHelper::isVisible(const model::World& world, const model::Trooper& sel
 	return world.isVisible(self.getShootingRange(),    
             self.getX(), self.getY(), self.getStance(),            
             target.getX(), target.getY(), target.getStance());
+}
+
+
+bool ShootHelper::canShoot(const TurnData& turnData, const model::Trooper& target)
+{
+	if (!(turnData.self.getActionPoints() >= turnData.self.getShootCost())) return false;
+	return isVisible(turnData.world, turnData.self, target);
 }

@@ -60,3 +60,20 @@ bool TeamHelper::teammatesInRadius(double radius, const TurnData& turnData)
 
 	return allInRange;
 }
+
+
+bool getTrooperByUniqueIndex(TrooperIndex index, model::Trooper& trooper, const model::World& world)
+{
+	std::vector<Trooper> troopers = world.getTroopers();
+
+	for (size_t i = 0; i < troopers.size(); ++i) { 
+		Trooper t = troopers.at(i);
+		if(index == TrooperIndex(t)){
+			trooper = t;
+			return true;
+		}
+	}
+
+	return false;
+}
+

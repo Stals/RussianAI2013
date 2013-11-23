@@ -17,6 +17,7 @@ using namespace std;
 
 
 bool MyStrategy::firstMove = true;
+TrooperIndex MyStrategy::currentEnemyID = TrooperIndex::noIndex();
 
 MyStrategy::MyStrategy() { 
 	// TODO нужно в начале выбрать первую цель - чтобы идти не в противоположный
@@ -44,11 +45,101 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 	
 	if(useGrenade(turnData)) return;
-
 	if(HealHelper::useMedkit(turnData, OTHERS)) return;
 	if(HealHelper::useMedkit(turnData, SELF)) return;
-
 	if(HealHelper::useHeal(turnData, OTHERS)) return;
+
+
+	if(self.getType() != FIELD_MEDIC){
+		// && нет целей, но есть общая другая цель - идти к той цели
+		// а то что есть цель определяется если есть противники вообщме
+		// смысл в том что если заметил противника - и не стреляешь - то к нему идут 2 типочка сразу короче
+		// если считать что видит дальше чем может стрелять
+		// как записывать цель то? как её всмысле потом проверить какбы - если походит и тд?
+		// хранить id типочка и потом смотреть есть ли он на карте и стрелять по нему? а что если..
+		// а если его не видно - то забить и идти дальше (если никто не видит) 
+		//- что возможно найдет новую цель, и тогда нужно будет на неё идти вообщето
+
+		// причем нужно туда идти учитывая свои тиммейтов
+	}
+	/*
+		Первый типок видит кого-то прям - ставит общую цель на его id
+		Идет к нему если нужно и стреляет
+		
+		Приходит второй, смотрит если у него щас нет целей в виду - и если есть ищет с тем id
+		Если если есть но без id - просто по ней стреляет.
+
+		Если типочка с id вообще не видно - ставит этого типочка как новое id иначе тупо удаляет 
+		и ставит -1 например
+
+		Если же нет противников и есть типок с id но при этом по нему не получается выстрелить 
+		- мы идем к нему, учитывя положение наших типов- и на след ходу делаем точно тоже самое
+
+		ЕСЛИ ЖЕ 
+			нет id и нет типочков, то идем дальше и делаем разные другие штуки
+
+	// а этот весь код происходит видимо уже после useMedkit но перед шутом.
+	// потому что он просто добавляет логике шуту чтоли?
+
+	
+	*/
+	// псевдокод
+
+	// TODO выбирать цель, по тому что видно (среди видимых), а не по тем что можно стрелять
+	
+	// if previous enemy is not in sight of anyone - remove him
+	/*Trooper enemyTrooper;
+	if(currentEnemyID != TrooperIndex::noIndex()){
+		if(!TeamHelper::getTrooperByUniqueIndex(currentEnemyID, enemyTrooper, world)){
+			currentEnemyID = TrooperIndex::noIndex();
+		}
+	}
+
+	if(currentEnemyID == TrooperIndex::noIndex()){
+		//???ShootHelper::shoot(turnData);
+
+		//if(enemy in sight){
+		//	current enemy = enemy in sight    // дальше если проверям может ли стрелять по нему
+		//	if(canShoot(currentEnemy){
+		//		shoot him
+		//	}else{
+		//		MovementHelper::moveTo(Point(enemyTrooper), turnData, true);
+		//	}
+		//}
+		// иначе проваливемся и делаем что-то дальше
+	}
+
+	else{ // have curent target
+		if(ShootHelper::shoot(turnData, enemyTrooper)){ // try shooting him
+			useRation(turnData);
+			return;
+		}else{
+			if(ShootHelper::shoot(turnData)){	//if(enemies in sight){
+				useRation(turnData);			//  pick one and shoot him}
+				return;
+			}else{
+				MovementHelper::moveTo(Point(enemyTrooper), turnData, true);
+			}
+		}
+	
+	}*/
+
+	// TODO не забывать есть рацион
+	// если несколько противников - он цель должен выбирать как shoot
+	// - тоесть shoot ее должен вернуть чтобы я id сохранил!!
+	// тупо по Shoot нельзя, потому что некоторые типы видят дальше чем могут стрелять - например медик
+	// соответствено цель должен уметь ставить даже медик?
+	// по нему палят например если?
+
+	// TODO уметь цель ставить не через shoot?
+	// типо есть метод выбора цели. 
+	// он возвращает цель которую видно, но нужно же еще стрелять цель которую ты сам можешь выстрелить - range!
+
+	/*
+	canShoot
+		если хватает очков и может стрелять
+	*/
+
 
 	if(ShootHelper::shoot(turnData)) {
 		// Если не получилось съесть он всеравно выстрелит
@@ -69,9 +160,9 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 
 	// TODO только если остальные типочки вокруг тебя
-	if(TeamHelper::teammatesInRadius(5, turnData)){
+	//if(TeamHelper::teammatesInRadius(5, turnData)){
 		if(MovementHelper::simpleMove(turnData)) return;
-	}
+	//}
 }
 
 
