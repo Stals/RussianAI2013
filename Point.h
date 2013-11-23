@@ -1,4 +1,6 @@
 #pragma once
+#include <complex>
+#include <cmath>
 
 struct Point{
 	Point(int x, int y):x(x), y(y){}
@@ -18,6 +20,6 @@ struct Point{
 	}
 
 	double getDistanceTo(const Point& other){
-		return std::fabs(sqrt((double)((other.x - x)*(other.x - x) + (other.y - y)*(other.y - y))));
+		return std::fabs(std::sqrt((double)((other.x - x)*(other.x - x) + (other.y - y)*(other.y - y))));
 	}
 };
