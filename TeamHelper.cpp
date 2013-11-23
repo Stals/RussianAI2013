@@ -62,7 +62,7 @@ bool TeamHelper::teammatesInRadius(double radius, const TurnData& turnData)
 }
 
 
-bool getTrooperByUniqueIndex(TrooperIndex index, model::Trooper& trooper, const model::World& world)
+bool TeamHelper::getTrooperByUniqueIndex(TrooperIndex index, model::Trooper& trooper, const model::World& world)
 {
 	std::vector<Trooper> troopers = world.getTroopers();
 
