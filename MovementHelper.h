@@ -16,7 +16,12 @@ enum Corner{
 class MovementHelper{
 public:
 	static void chooseFirstTarget(const TurnData& turnData);
-	static bool simpleMove(const model::Trooper& self, const model::World& world, const model::Game& game, model::Move& move);
+	static bool simpleMove(const TurnData& turnData);
+
+	// пробует следовать за союзником этого типа / если такого нет или не получается возвращает false
+	static bool follow(TrooperType type);
+
+	static bool moveTo(const Point& target, const TurnData& turnData);
 
 private:
 	MovementHelper();

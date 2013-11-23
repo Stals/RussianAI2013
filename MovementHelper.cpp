@@ -20,65 +20,20 @@ Corner MovementHelper::getRandomCorner()
 
 Corner MovementHelper::getCurrentCorner(const model::World& world, const model::Trooper& self)
 {
-	if( Point(self).inRadius( targetToPoint(world, TopLeft), 5)) return TopLeft;
-	if( Point(self).inRadius( targetToPoint(world, TopRight), 5)) return TopRight;
-	if( Point(self).inRadius( targetToPoint(world, BottomLeft), 5)) return BottomLeft;
-	if( Point(self).inRadius( targetToPoint(world, BottomRight), 5)) return BottomRight;
+	const double radius = 5.0;
+	if( Point(self).inRadius( targetToPoint(world, TopLeft), radius)) return TopLeft;
+	if( Point(self).inRadius( targetToPoint(world, TopRight), radius)) return TopRight;
+	if( Point(self).inRadius( targetToPoint(world, BottomLeft), radius)) return BottomLeft;
+	if( Point(self).inRadius( targetToPoint(world, BottomRight), radius)) return BottomRight;
 	return TopLeft;
 }
 
-bool MovementHelper::simpleMove(const Trooper& self, const World& world, const Game& game, Move& move){
+bool MovementHelper::simpleMove(const TurnData& turnData){
 	// TODO поочередно идем по всем углам, как только доходим достаточно близко идем в след угол
 
-	if (self.getActionPoints() >= game.getStandingMoveCost()) {         // Если достаточно очков действия
-        vector<vector<CellType> > cells = world.getCells();             // Получаем карту препятствий на игровом поле
-
-		Point targetPoint = chooseTarget(self, world);
-		
-		// fill map
-		for(int y = 0; y < m; y++){
-			for(int x = 0; x < n; x++){
-				if(cells[x][y] == FREE){
-					map[x][y] = 0;
-				}else{
-					map[x][y] = 1;
-				}
-			}
-		}
-
-		// print
-		/*for(int y=0;y<m;y++)
-		{
-			for(int x=0;x<n;x++)
-				if(map[x][y]==0)
-					cout<<".";
-				else if(map[x][y]==1)
-					cout<<"O"; //obstacle
-				else if(map[x][y]==2)
-					cout<<"S"; //start
-				else if(map[x][y]==3)
-					cout<<"R"; //route
-				else if(map[x][y]==4)
-					cout<<"F"; //finish
-			cout<<endl;
-		}*/
-
-
-
-		// find route
-		std::string route=pathFind(self.getX(), self.getY(), targetPoint.x, targetPoint.y);
-
-		if(route.length()>0)
-    {       char c = route.at(0);
-            int j = atoi(&c); 
-            int x = self.getX() + dx[j];
-            int y = self.getY() + dy[j];
-			move.setAction(MOVE);
-			move.setX(x);                                 
-            move.setY(y);  
-			return true;
-		}	
-
+	if (turnData.self.getActionPoints() >= turnData.game.getStandingMoveCost()) {         // Если достаточно очков действия
+		Point targetPoint = chooseTarget(turnData.self, turnData.world);		
+		return MovementHelper::moveTo(targetPoint, turnData);
     }
     
 	return false;
@@ -116,4 +71,63 @@ Point MovementHelper::targetToPoint(const model::World& world, Corner target)
 	case BottomRight: return Point(world.getWidth() - offset, world.getHeight() - offset);
 	}
 	return Point(0,0);
+}
+
+
+bool MovementHelper::moveTo(const Point& targetPoint, const TurnData& turnData)
+{
+	vector<vector<CellType> > cells = turnData.world.getCells();             // Получаем карту препятствий на игровом поле
+		// fill map
+		for(int y = 0; y < m; y++){
+			for(int x = 0; x < n; x++){
+				if(cells[x][y] == FREE){
+					map[x][y] = 0;
+				}else{
+					map[x][y] = 1;
+				}
+			}
+		}
+
+		// print
+		/*for(int y=0;y<m;y++)
+		{
+			for(int x=0;x<n;x++)
+				if(map[x][y]==0)
+					cout<<".";
+				else if(map[x][y]==1)
+					cout<<"O"; //obstacle
+				else if(map[x][y]==2)
+					cout<<"S"; //start
+				else if(map[x][y]==3)
+					cout<<"R"; //route
+				else if(map[x][y]==4)
+					cout<<"F"; //finish
+			cout<<endl;
+		}*/
+
+
+
+		// find route
+		std::string route=pathFind(turnData.self.getX(), turnData.self.getY(), targetPoint.x, targetPoint.y);
+
+		if(route.length()>0)
+    {       char c = route.at(0);
+            int j = atoi(&c); 
+            int x = turnData.self.getX() + dx[j];
+            int y = turnData.self.getY() + dy[j];
+			turnData.move.setAction(MOVE);
+			turnData.move.setX(x);                                 
+            turnData.move.setY(y);  
+			return true;
+		}	
+	return false;
+
+}
+
+bool MovementHelper::follow(TrooperType type)
+{
+	// get teammates
+	// get teammate with this type
+	// go to this point as target
+	return false;
 }

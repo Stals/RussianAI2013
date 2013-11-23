@@ -57,7 +57,7 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 
 	if(HealHelper::useHeal(turnData, SELF)) return;
 	// TODO - check for bonuses
-	if(MovementHelper::simpleMove(self, world, game, move)) return;
+	if(MovementHelper::simpleMove(turnData)) return;
 }
 
 
