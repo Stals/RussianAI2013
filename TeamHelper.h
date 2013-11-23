@@ -11,14 +11,14 @@ struct TrooperIndex{
 	TrooperIndex(const model::Trooper& trooper):
 		playerIndex(trooper.getPlayerId()), teammateIndex(trooper.getTeammateIndex()){}
 
-	 bool TrooperIndex::operator==(const TrooperIndex &other) const {
+	 bool operator==(const TrooperIndex &other) const {
 		 if(teammateIndex == other.teammateIndex){
 			 return playerIndex == other.playerIndex;
 		 }
 		 return false;
 	 }
 
-	 bool TrooperIndex::operator!=(const TrooperIndex &other) const {
+	 bool operator!=(const TrooperIndex &other) const {
 		 return !(*this == other);
 	 }
 
