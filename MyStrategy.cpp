@@ -145,11 +145,13 @@ void MyStrategy::move(const Trooper& self, const World& world, const Game& game,
 		else if(MovementHelper::follow(COMMANDER, turnData)) return;
 	}else if(self.getType() == COMMANDER){
 		if(MovementHelper::follow(SOLDIER, turnData)) return;
+	}else if(self.getType() == SNIPER || self.getType() == SCOUT){
+		if(MovementHelper::follow(FIELD_MEDIC, turnData)) return;
 	}
 
 
 	// TODO только если остальные типочки вокруг тебя
-	if(separatedMap || TeamHelper::teammatesInRadius(5, turnData)){
+	if(separatedMap || TeamHelper::teammatesInRadius(6, turnData)){
 		if(MovementHelper::simpleMove(turnData)) return;
 	}
 }
